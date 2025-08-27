@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organismos de Protección - Misiones, Argentina</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .search-container {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #f1f3f4;
+            vertical-align: middle;
+        }
+
+        .table tr:hover {
+            background-color: #f8f9fa;
+            transition: background-color 0.2s ease;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-hospital { background: #e3f2fd; color: #1976d2; }
+        .badge-ministerio { background: #f3e5f5; color: #7b1fa2; }
+        .badge-centro { background: #e8f5e8; color: #388e3c; }
+        .badge-unidad { background: #fff3e0; color: #f57c00; }
+        .badge-direccion { background: #fce4ec; color: #c2185b; }
+        .badge-fundacion { background: #e0f2f1; color: #00695c; }
+        .badge-default { background: #f5f5f5; color: #616161; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-weight: 300;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-control select {
+            cursor: pointer;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state img {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 12px;
+            border-radius: 20px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+            
+            .controls, .action-buttons {
+                display: none;
+            }
+            
+            .header {
+                background: #2c3e50 !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            .table {
+                min-width: 600px;
+            }
+            
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Organismos de Protección</h1>
+            <p>Provincia de Misiones, Argentina - Conforme a la Legislación Vigente</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="controls">
+                <button class="btn btn-success" onclick="openModal('add')">
+                    ➕ Agregar Organismo
+                </button>
+                <button class="btn btn-info" onclick="printList()">
+                    🖨️ Imprimir Lista
+                </button>
+                <div class="search-container">
+                    <input type="text" class="search-input" id="searchInput" placeholder="🔍 Buscar por nombre o tipo de organismo..." onkeyup="filterOrganisms()">
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="table" id="organismsTable">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Contacto</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="organismsTableBody">
+                        <!-- Los datos se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar/editar organismo -->
+    <div id="organismModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Agregar Organismo</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="organismForm">
+                    <div class="form-group">
+                        <label for="nombre">Nombre del Organismo *</label>
+                        <input type="text" class="form-control" id="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo">Tipo de Organismo *</label>
+                        <select class="form-control" id="tipo" required>
+                            <option value="">Seleccionar tipo...</option>
+                            <option value="Hospital">Hospital</option>
+                            <option value="Ministerio">Ministerio</option>
+                            <option value="Centro Asistencial">Centro Asistencial</option>
+                            <option value="Unidad de Traslado">Unidad de Traslado</option>
+                            <option value="Dirección Gubernamental">Dirección Gubernamental</option>
+                            <option value="Fundación">Fundación</option>
+                            <option value="Asociación Civil">Asociación Civil</option>
+                            <option value="Instituto">Instituto</option>
+                            <option value="Defensoría">Defensoría</option>
+                            <option value="Subsecretaría">Subsecretaría</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono</label>
+                        <input type="text" class="form-control" id="telefono">
+                    </div>
+                    <div class="form-group">
+                        <label for="contacto">Persona de Contacto</label>
+                        <input type="text" class="form-control" id="contacto">
+                    </div>
+                    <div class="form-group">
+                        <label for="notas">Notas Adicionales</label>
+                        <textarea class="form-control" id="notas" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="saveOrganism()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos iniciales (precargados)
+        const initialOrganisms = [
+            {
+                id: "org1",
+                nombre: "Hospital Barreyro",
+                tipo: "Hospital",
+                email: "hospitaldepediatriabarreyro@gmail.com",
+                telefono: "",
+                contacto: "",
+                notas: ""
+            },
+            {
+                id: "org2",
+                nombre: "Hospital Carrillo",
+                tipo: "Hospital",
+                email: "hospitalsaludmentalcarrillo@gmail.com",
+                telefono: "",
+                contacto: "",
+                notas: ""
+            },
+            {
+                id: "org3",
+                nombre: "Ministerio de Salud Pública de Misiones",
+                tipo: "Ministerio",
+                email: "juridicomspmisiones@gmail.com",
+                telefono: "",
+                contacto: "",
+                notas: "Para compartir oficios dirigidos a cualquier Hospital"
+            },
+            {
+                id: "org4",
+                nombre: "Centro Asistencial",
+                tipo: "Centro Asistencial",
+                email: "",
+                telefono: "+5493755636878",
+                contacto: "Jordana Duarte Martinelli",
+                notas: "Encargada de recibir oficios"
+            },
+            {
+                id: "org5",
+                nombre: "Unidad Central de Traslado",
+                tipo: "Unidad de Traslado",
+                email: "mps-uct@hotmail.com",
+                telefono: "",
+                contacto: "",
+                notas: ""
+            },
+            {
+                id: "org6",
+                nombre: "Dirección de Asuntos de Familia",
+                tipo: "Dirección Gubernamental",
+                email: "",
+                telefono: "+5493764856048",
+                contacto: "",
+                notas: ""
+            },
+            {
+                id: "org7",
+                nombre: "Fundación Reto a la vida",
+                tipo: "Fundación",
+                email: "retomisiones@gmail.com",
+                telefono: "",
+                contacto: "",
+                notas: ""
+            }
+        ];
+
+        let organisms = [];
+        let editingId = null;
+
+        // Cargar datos al iniciar
+        function loadData() {
+            const savedData = localStorage.getItem('organisms');
+            if (savedData) {
+                organisms = JSON.parse(savedData);
+            } else {
+                organisms = [...initialOrganisms];
+                saveData();
+            }
+            renderTable();
+        }
+
+        // Guardar datos en localStorage
+        function saveData() {
+            localStorage.setItem('organisms', JSON.stringify(organisms));
+        }
+
+        // Generar ID único
+        function generateId() {
+            return 'org' + Date.now() + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Obtener clase CSS para el badge según el tipo
+        function getBadgeClass(tipo) {
+            const typeMap = {
+                'Hospital': 'badge-hospital',
+                'Ministerio': 'badge-ministerio',
+                'Centro Asistencial': 'badge-centro',
+                'Unidad de Traslado': 'badge-unidad',
+                'Dirección Gubernamental': 'badge-direccion',
+                'Fundación': 'badge-fundacion'
+            };
+            return typeMap[tipo] || 'badge-default';
+        }
+
+        // Renderizar tabla
+        function renderTable() {
+            const tbody = document.getElementById('organismsTableBody');
+            tbody.innerHTML = '';
+
+            if (organisms.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <div>📋</div>
+                            <h3>No hay organismos registrados</h3>
+                            <p>Haz clic en "Agregar Organismo" para comenzar</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            organisms.forEach(organism => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${organism.nombre}</strong></td>
+                    <td><span class="badge ${getBadgeClass(organism.tipo)}">${organism.tipo}</span></td>
+                    <td>${organism.email || '-'}</td>
+                    <td>${organism.telefono || '-'}</td>
+                    <td>${organism.contacto || '-'}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-warning btn-sm" onclick="editOrganism('${organism.id}')">✏️ Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteOrganism('${organism.id}')">🗑️ Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Filtrar organismos
+        function filterOrganisms() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredOrganisms = organisms.filter(organism => 
+                organism.nombre.toLowerCase().includes(searchTerm) ||
+                organism.tipo.toLowerCase().includes(searchTerm)
+            );
+
+            const tbody = document.getElementById('organismsTableBody');
+            tbody.innerHTML = '';
+
+            if (filteredOrganisms.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <div>🔍</div>
+                            <h3>No se encontraron resultados</h3>
+                            <p>Intenta con otros términos de búsqueda</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filteredOrganisms.forEach(organism => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${organism.nombre}</strong></td>
+                    <td><span class="badge ${getBadgeClass(organism.tipo)}">${organism.tipo}</span></td>
+                    <td>${organism.email || '-'}</td>
+                    <td>${organism.telefono || '-'}</td>
+                    <td>${organism.contacto || '-'}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-warning btn-sm" onclick="editOrganism('${organism.id}')">✏️ Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteOrganism('${organism.id}')">🗑️ Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Abrir modal
+        function openModal(mode, id = null) {
+            const modal = document.getElementById('organismModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const form = document.getElementById('organismForm');
+
+            if (mode === 'add') {
+                modalTitle.textContent = 'Agregar Organismo';
+                form.reset();
+                editingId = null;
+            } else if (mode === 'edit' && id) {
+                modalTitle.textContent = 'Editar Organismo';
+                const organism = organisms.find(o => o.id === id);
+                if (organism) {
+                    document.getElementById('nombre').value = organism.nombre;
+                    document.getElementById('tipo').value = organism.tipo;
+                    document.getElementById('email').value = organism.email;
+                    document.getElementById('telefono').value = organism.telefono;
+                    document.getElementById('contacto').value = organism.contacto;
+                    document.getElementById('notas').value = organism.notas;
+                    editingId = id;
+                }
+            }
+
+            modal.style.display = 'block';
+        }
+
+        // Cerrar modal
+        function closeModal() {
+            document.getElementById('organismModal').style.display = 'none';
+            editingId = null;
+        }
+
+        // Guardar organismo
+        function saveOrganism() {
+            const nombre = document.getElementById('nombre').value.trim();
+            const tipo = document.getElementById('tipo').value;
+            const email = document.getElementById('email').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const contacto = document.getElementById('contacto').value.trim();
+            const notas = document.getElementById('notas').value.trim();
+
+            if (!nombre || !tipo) {
+                alert('Por favor, completa los campos obligatorios (Nombre y Tipo).');
+                return;
+            }
+
+            const organismData = {
+                nombre,
+                tipo,
+                email,
+                telefono,
+                contacto,
+                notas
+            };
+
+            if (editingId) {
+                // Editar organismo existente
+                const index = organisms.findIndex(o => o.id === editingId);
+                if (index !== -1) {
+                    organisms[index] = { ...organisms[index], ...organismData };
+                }
+            } else {
+                // Agregar nuevo organismo
+                organismData.id = generateId();
+                organisms.push(organismData);
+            }
+
+            saveData();
+            renderTable();
+            closeModal();
+            
+            // Limpiar búsqueda
+            document.getElementById('searchInput').value = '';
+        }
+
+        // Editar organismo
+        function editOrganism(id) {
+            openModal('edit', id);
+        }
+
+        // Eliminar organismo
+        function deleteOrganism(id) {
+            const organism = organisms.find(o => o.id === id);
+            if (organism && confirm(`¿Estás seguro de que deseas eliminar "${organism.nombre}"?`)) {
+                organisms = organisms.filter(o => o.id !== id);
+                saveData();
+                renderTable();
+                
+                // Limpiar búsqueda
+                document.getElementById('searchInput').value = '';
+            }
+        }
+
+        // Imprimir lista
+        function printList() {
+            window.print();
+        }
+
+        // Cerrar modal al hacer clic fuera de él
+        window.onclick = function(event) {
+            const modal = document.getElementById('organismModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Inicializar aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+        });
+    </script>
+</body>
+</html>
+
